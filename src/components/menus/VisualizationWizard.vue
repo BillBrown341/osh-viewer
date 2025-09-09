@@ -24,6 +24,7 @@ const selectedDSProperty = ref(null)
 const selectedVisualizationOptions = ref(null)
 const selectedMarkerProperty = ref(null)
 const selectedLOBProperty = ref(null)
+const selectedLOBColor = ref(null)
 
 const visualizationName = ref('')
 const visualizationComponents = ref<VisualizationComponents | undefined>(undefined)
@@ -118,7 +119,7 @@ function createVisualization() {
       }
       break;
     case 'lob':
-      const lobResult = CreateLOBViewProps(selectedDatastream.value, selectedMarkerProperty.value, selectedLOBProperty.value, vizStore.currentVisDataStreamOptions)
+      const lobResult = CreateLOBViewProps(selectedDatastream.value, selectedMarkerProperty.value, selectedLOBProperty.value, selectedLOBColor.value, vizStore.currentVisDataStreamOptions)
       visualizationComponents = {
         dataSource: lobResult.dataSource,
         dataLayer: lobResult.mapLayer,
@@ -203,6 +204,7 @@ watch(selectedVisualizationOptions, (val) => {
         <LOBOptions 
         v-model:selectedLocation="selectedMarkerProperty"
         v-model:selectedLOB = "selectedLOBProperty" 
+        v-model:selectedColor = "selectedLOBColor" 
         />
       </div>
       <div v-else-if="selectedType === 'text'">

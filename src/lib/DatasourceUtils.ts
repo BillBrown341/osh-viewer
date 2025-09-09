@@ -371,7 +371,7 @@ export function CreateMapViewProps(ds: OSHDatastream, selectedProperty: any, vis
  * @param visOptions
  * @constructor
  */
-export function CreateLOBViewProps(ds: OSHDatastream, selectedLocation: any, selectedLOB: any, visOptions: any): {
+export function CreateLOBViewProps(ds: OSHDatastream, selectedLocation: any, selectedLOB: any, selectedColor: any, visOptions: any): {
   dataSource: ISweApiDataSourceProperties,
   mapLayer: IMapLayerProperties,
   mapView: IMapViewProperties
@@ -417,7 +417,7 @@ export function CreateLOBViewProps(ds: OSHDatastream, selectedLocation: any, sel
     markerColor: visOptions.markerColor || 'red',
     markerIcon: visOptions.markerIcon || undefined,
 
-    color : 'rgba(0,0,255,0.5)',
+    color : selectedColor,
     weight : 10,
     opacity : .5,
     name: parentSystem.name

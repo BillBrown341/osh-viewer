@@ -255,7 +255,7 @@ watch(lobVisualizations, (updated) => {
       dataSourceIds: [dsInstance.id],
       // this is key: how to get geometry from each record
       getStartLocationAndBearing: layerOpts.getStartLocationAndBearing, 
-      color : 'rgba(0,0,255,0.5)',
+      color : layerOpts.color,
       weight : 10,
       opacity : .5,
     })

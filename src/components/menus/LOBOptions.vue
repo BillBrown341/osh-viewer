@@ -3,20 +3,22 @@ import { fetchSchema, mineDatasourceObsProps, SchemaFieldProperty } from '@/lib/
 import { onMounted, ref, watch } from 'vue'
 import { useVisualizationStore } from '@/stores/visualizationstore'
 import { useUIStore } from '@/stores/uistore'
-import DataSourcePicker from '@/components/menus/DataSourcePicker.vue'
 import TimePicker from '@/components/menus/TimePicker.vue'
 import { useStartEndTimeSync, usePlaybackModeSync } from '@/composables/DataSourceOptions'
 import { Mode } from 'osh-js/source/core/datasource/Mode.js'
+import DataSourceSelector from './DataSourceDropDown.vue'
 
 const visualizationStore = useVisualizationStore()
 const markerDS = ref<any>(null)
 const selectedLocation = ref<SchemaFieldProperty | null>(null)
 const selectedLOB = ref<SchemaFieldProperty | null>(null)
+const selectedColor = ref<SchemaFieldProperty | null>(null)
+const selectedOpacity = ref<SchemaFieldProperty | null>(null)
 const obsProps = ref<{ 'definition': string, 'label': string }[]>([])
 const dsSchema = ref<any>(null)
 const uiStore = useUIStore()
 
-const emit = defineEmits(['update:selectedLocation', 'update:selectedLOB'])
+const emit = defineEmits(['update:selectedLocation', 'update:selectedLOB', 'update:selectedColor', 'update:selectedOpacity'])
 
 const startTime = ref<string | null>(null)
 const endTime = ref<string | null>(null)
@@ -50,12 +52,30 @@ watch(selectedLOB, (val) => {
   emit('update:selectedLOB', val)
 })
 
+watch(selectedColor, (val) => {
+  emit('update:selectedColor', val)
+})
+
+// watch(selectedOpacity, (val) => {
+//   emit('update:selectedOpacity', val)
+// })
+
 </script>
 
 <template>
   <v-card>
-    <DataSourcePicker title="Select Location Property" v-model:selectedProperty="selectedLocation" />
-    <DataSourcePicker title="Select LOB Property" v-model:selectedProperty="selectedLOB" />
+    <DataSourceSelector title="Location" v-model:selectedProperty="selectedLocation" />
+    <DataSourceSelector title="Line of Bearing" v-model:selectedProperty="selectedLOB" />
+    <v-card class="pa-2">
+      <v-card-title>Select Color</v-card-title>
+      <v-container>
+        <v-color-picker 
+          v-model="selectedColor"
+          mode="rgb"          
+        >
+        </v-color-picker>
+      </v-container>
+    </v-card>
     <TimePicker title="Start Time" v-model:formattedDate="startTime" />
     <TimePicker title="End Time" v-model:formattedDate="endTime" />
     
