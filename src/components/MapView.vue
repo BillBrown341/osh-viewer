@@ -226,11 +226,31 @@ watch(lobVisualizations, (updated) => {
       endTime: viz.visualizationComponents.dataSource.endTime,
       mode: viz.visualizationComponents.dataSource.mode,
     })
+    
+    const layerOpts = viz.visualizationComponents.dataLayer
+
+    console.log('[MapView] Creating datasource for PointMarkerLayer:', dsInstance)
+    const pmLayer = new PointMarkerLayer({
+      name: viz.name,
+      dataSourceIds: [dsInstance.id],
+      getLocation: layerOpts.getLocation,
+      // getLocation: (rec, timestamp) => {
+      //   return {
+      //     x: rec.location.lat,
+      //     y: rec.location.lon,
+      //     z: rec.location.alt || 0
+      //   }
+      // },
+      label: viz.visualizationComponents.dataLayer.name,
+      icon: '/icons/map/map-marker.svg',
+      iconSize: [32, 32],
+      labelOffset: [-16, -32],
+    })
+    lobLayers.value.push(pmLayer)
+    mapView.value.addLayer(pmLayer)
 
     console.log('[MapView] Creating datasource for LineLayer:', dsInstance)
-
-    const layerOpts = viz.visualizationComponents.dataLayer
-    const lobLayer = new LineLayer({
+    const lineLayer = new LineLayer({
       name: viz.name,
       dataSourceIds: [dsInstance.id],
       // this is key: how to get geometry from each record
@@ -239,10 +259,10 @@ watch(lobVisualizations, (updated) => {
       weight : 10,
       opacity : .5,
     })
-
-    lobLayers.value.push(lobLayer)
-    mapView.value.addLayer(lobLayer)
-    console.log('[MapView] Creating LineLayer:', lobLayer)
+    
+    lobLayers.value.push(lineLayer)
+    mapView.value.addLayer(lineLayer)
+    console.log('[MapView] Creating LineLayer:', lineLayer)
     dsInstance.connect()
   }
 }, { deep: true })

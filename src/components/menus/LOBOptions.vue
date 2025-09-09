@@ -10,12 +10,13 @@ import { Mode } from 'osh-js/source/core/datasource/Mode.js'
 
 const visualizationStore = useVisualizationStore()
 const markerDS = ref<any>(null)
-const selectedProperty = ref<SchemaFieldProperty | null>(null)
+const selectedLocation = ref<SchemaFieldProperty | null>(null)
+const selectedLOB = ref<SchemaFieldProperty | null>(null)
 const obsProps = ref<{ 'definition': string, 'label': string }[]>([])
 const dsSchema = ref<any>(null)
 const uiStore = useUIStore()
 
-const emit = defineEmits(['update:selectedProperty'])
+const emit = defineEmits(['update:selectedLocation', 'update:selectedLOB'])
 
 const startTime = ref<string | null>(null)
 const endTime = ref<string | null>(null)
@@ -41,17 +42,23 @@ onMounted(async () => {
   fetchProps()
 })
 
-watch(selectedProperty, (val) => {
-  emit('update:selectedProperty', val)
+watch(selectedLocation, (val) => {
+  emit('update:selectedLocation', val)
+})
+
+watch(selectedLOB, (val) => {
+  emit('update:selectedLOB', val)
 })
 
 </script>
 
 <template>
   <v-card>
-    <DataSourcePicker title="Select Location Property" v-model:selectedProperty="selectedProperty" />
+    <DataSourcePicker title="Select Location Property" v-model:selectedProperty="selectedLocation" />
+    <DataSourcePicker title="Select LOB Property" v-model:selectedProperty="selectedLOB" />
     <TimePicker title="Start Time" v-model:formattedDate="startTime" />
     <TimePicker title="End Time" v-model:formattedDate="endTime" />
+    
 
     <v-combobox
       v-model="playbackMode"

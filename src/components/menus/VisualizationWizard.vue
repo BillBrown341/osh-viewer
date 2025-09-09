@@ -23,6 +23,7 @@ const selectedType = ref('')
 const selectedDSProperty = ref(null)
 const selectedVisualizationOptions = ref(null)
 const selectedMarkerProperty = ref(null)
+const selectedLOBProperty = ref(null)
 
 const visualizationName = ref('')
 const visualizationComponents = ref<VisualizationComponents | undefined>(undefined)
@@ -117,7 +118,7 @@ function createVisualization() {
       }
       break;
     case 'lob':
-      const lobResult = CreateLOBViewProps(selectedDatastream.value, selectedMarkerProperty.value, vizStore.currentVisDataStreamOptions)
+      const lobResult = CreateLOBViewProps(selectedDatastream.value, selectedMarkerProperty.value, selectedLOBProperty.value, vizStore.currentVisDataStreamOptions)
       visualizationComponents = {
         dataSource: lobResult.dataSource,
         dataLayer: lobResult.mapLayer,
@@ -199,7 +200,10 @@ watch(selectedVisualizationOptions, (val) => {
         <PointMarkerOptions v-model:selectedProperty="selectedMarkerProperty" />
       </div>
       <div v-else-if="selectedType === 'lob'">
-        <LOBOptions v-model:selectedProperty="selectedMarkerProperty" />
+        <LOBOptions 
+        v-model:selectedLocation="selectedMarkerProperty"
+        v-model:selectedLOB = "selectedLOBProperty" 
+        />
       </div>
       <div v-else-if="selectedType === 'text'">
         <v-alert type="info">Text options coming soon...</v-alert>

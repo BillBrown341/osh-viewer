@@ -371,7 +371,7 @@ export function CreateMapViewProps(ds: OSHDatastream, selectedProperty: any, vis
  * @param visOptions
  * @constructor
  */
-export function CreateLOBViewProps(ds: OSHDatastream, selectedProperty: any, visOptions: any): {
+export function CreateLOBViewProps(ds: OSHDatastream, selectedLocation: any, selectedLOB: any, visOptions: any): {
   dataSource: ISweApiDataSourceProperties,
   mapLayer: IMapLayerProperties,
   mapView: IMapViewProperties
@@ -390,7 +390,6 @@ export function CreateLOBViewProps(ds: OSHDatastream, selectedProperty: any, vis
     responseFormat: 'application/swe+json'
   }
 
-  console.log('\x1b[1m [DatasourceUtils] Creating LOB Layer for property: \x1b[0m', selectedProperty)
   // Build MapLayerProperties
   const mapLayer: IMapLayerProperties = {
     dataSourceId: ds.datastream.properties.id,
@@ -399,13 +398,25 @@ export function CreateLOBViewProps(ds: OSHDatastream, selectedProperty: any, vis
       // You may need to adjust this logic based on your schema
       return {
         startLocation: {
-          x: rec[selectedProperty.name].lon,
-          y: rec[selectedProperty.name].lat,
-          z: rec[selectedProperty.name].alt || 0 // Default to 0 if altitude is not provided
+          x: rec[selectedLocation.name].lon,
+          y: rec[selectedLocation.name].lat,
+          z: rec[selectedLocation.name].alt || 0 // Default to 0 if altitude is not provided
         },
-        bearing: rec['raw_lob'] * Math.PI / 180
+        bearing: rec[selectedLOB.name] * Math.PI / 180
       }
     },
+    getLocation: (rec: any) => {
+      // Assumes the selectedProperty is an object with lat/lon or similar
+      // You may need to adjust this logic based on your schema
+      return {
+        x: rec[selectedLocation.name].lon,
+        y: rec[selectedLocation.name].lat,
+        z: rec[selectedLocation.name].alt || 0 // Default to 0 if altitude is not provided
+      }
+    },
+    markerColor: visOptions.markerColor || 'red',
+    markerIcon: visOptions.markerIcon || undefined,
+
     color : 'rgba(0,0,255,0.5)',
     weight : 10,
     opacity : .5,
