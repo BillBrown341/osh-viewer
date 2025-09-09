@@ -1,8 +1,10 @@
 <script setup>
 
-import NodeManager from '@/components/oshconnect/NodeManager.vue'
+// import NodeManager from '@/components/oshconnect/NodeManager.vue' // appears to be depreicated and says to use NodeConfigForm
 import NodeBrowser from '@/components/oshconnect/NodeBrowser.vue'
 import HeaderToolbar from '@/components/HeaderToolbar.vue'
+import NodeConfigForm from '@/components/menus/NodeConfigForm.vue'
+
 </script>
 
 <template>
@@ -11,7 +13,8 @@ import HeaderToolbar from '@/components/HeaderToolbar.vue'
       <v-row no-gutters align="stretch" class="fill-height">
         <v-col cols="12" md="6" class="d-flex flex-column fill-height">
           <v-card class="manager-card flex-grow-1" elevation="6">
-            <NodeManager class="flex-grow-1" />
+            <!-- <NodeManager class="flex-grow-1" /> -->
+            <NodeConfigForm class="flex-grow-1" />
           </v-card>
         </v-col>
         <v-col cols="12" md="6" class="d-flex flex-column fill-height">

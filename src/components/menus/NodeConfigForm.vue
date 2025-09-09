@@ -8,12 +8,12 @@ const oshconnect = useOSHConnectStore().getInstance();
 const uiStore = useUIStore();
 
 // Define reactive variables for the form fields
-const nodeName = ref('Test')
-const nodeHost = ref('localhost')
-const nodePort = ref('8282')
+const nodeName = ref('Kraken')
+const nodeHost = ref('192.168.50.119')
+const nodePort = ref('8082')
 const nodePath = ref('sensorhub/api')
-const nodeUser = ref('admin')
-const nodePassword = ref('admin')
+const nodeUser = ref('kraken')
+const nodePassword = ref('sdr')
 
 const createNode = () => {
   // This function will be called when the button is clicked

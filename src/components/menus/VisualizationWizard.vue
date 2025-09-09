@@ -9,8 +9,10 @@ import { useVisualizationStore } from '@/stores/visualizationstore'
 import { storeToRefs } from 'pinia'
 import VideoOptions from '@/components/menus/VideoOptions.vue'
 import PointMarkerOptions from '@/components/menus/PointMarkerOptions.vue'
-import { CreateChartViewProps, CreateMapViewProps, CreateVideoViewProps } from '@/lib/DatasourceUtils'
+import { CreateChartViewProps, CreateMapViewProps, CreateVideoViewProps, CreateLOBViewProps } from '@/lib/DatasourceUtils'
 import IconPicker from '@/components/menus/IconPicker.vue'
+import LOBOptions from './LOBOptions.vue'
+import { Console } from 'console'
 
 const uiStore = useUIStore();
 const { selectedDatastream } = storeToRefs(uiStore);
@@ -36,6 +38,7 @@ const visualizationTypes = [
   { label: 'Chart', value: 'chart', icon: 'mdi-chart-line' },
   { label: 'Video', value: 'video', icon: 'mdi-video' },
   { label: 'Point Marker', value: 'pointmarker', icon: 'mdi-map' },
+  {label: 'Line of Bearing', value: 'lob', icon: 'mdi-ruler-square-compass' },
   { label: 'Text', value: 'text', icon: 'mdi-format-text' }
 ]
 
@@ -63,6 +66,7 @@ function submitWizard() {
   if (!vizResult || !vizResult.components) {
     alert('Error creating visualization!');
   } else {
+
     visualizationComponents.value = vizResult.components;
     const newViz: OSHVisualization = vizResult.visualization;
     newViz.setVisualizationComponents(visualizationComponents.value);
@@ -75,8 +79,13 @@ function submitWizard() {
 
 function createVisualization() {
 
-  const newViz = new OSHVisualization(`visualization-${randomUUID()}`, visualizationName.value,
-    selectedType.value, null, selectedDatastream.value);
+  const newViz = new OSHVisualization(
+    `visualization-${randomUUID()}`, 
+    visualizationName.value,
+    selectedType.value, 
+    null, 
+    selectedDatastream.value
+  );
 
   let visualizationComponents: VisualizationComponents | undefined = undefined;
   switch (newViz.type) {
@@ -105,6 +114,14 @@ function createVisualization() {
         dataSource: pmResult.dataSource,
         dataLayer: pmResult.mapLayer,
         dataView: pmResult.mapView
+      }
+      break;
+    case 'lob':
+      const lobResult = CreateLOBViewProps(selectedDatastream.value, selectedMarkerProperty.value, vizStore.currentVisDataStreamOptions)
+      visualizationComponents = {
+        dataSource: lobResult.dataSource,
+        dataLayer: lobResult.mapLayer,
+        dataView: lobResult.mapView
       }
       break;
     case 'text':
@@ -180,6 +197,9 @@ watch(selectedVisualizationOptions, (val) => {
       </div>
       <div v-else-if="selectedType === 'pointmarker'">
         <PointMarkerOptions v-model:selectedProperty="selectedMarkerProperty" />
+      </div>
+      <div v-else-if="selectedType === 'lob'">
+        <LOBOptions v-model:selectedProperty="selectedMarkerProperty" />
       </div>
       <div v-else-if="selectedType === 'text'">
         <v-alert type="info">Text options coming soon...</v-alert>

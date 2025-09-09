@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "run-p \"build-only {@}\" --",
-    "preview": "vite preview",
+    "preview": "vite preview --port 8082",
     "build-only": "vite build",
     "format": "prettier --write src/",
     "host": "vite --host"

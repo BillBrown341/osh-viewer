@@ -1,5 +1,6 @@
 <script setup xmlns="http://www.w3.org/1999/html" lang="ts">
 import PointMarkerLayer from 'osh-js/source/core/ui/layer/PointMarkerLayer'
+import LineLayer from 'osh-js/source/core/ui/layer/LineLayer' 
 import CesiumView from 'osh-js/source/core/ui/view/map/CesiumView'
 import { CesiumTerrainProvider, EllipsoidTerrainProvider, Ion, IonResource } from 'cesium'
 import * as Cesium from 'cesium'
@@ -16,6 +17,7 @@ const mapLayerType = ref('leaflet')
 const mapView = ref<any>(null)
 const currentVisualizations = ref<OSHVisualization[]>([])
 const pmLayers = ref([])
+const lobLayers = ref([])
 
 const mapVisualizations = computed(() => {
   return visualizationStore.getVisualizationsByType('pointmarker')
@@ -25,7 +27,9 @@ const featureVisualizations = computed(() => {
   return visualizationStore.getVisualizationsByType('pointmarker-feature')
 })
 
-
+const lobVisualizations = computed(() => {
+  return visualizationStore.getVisualizationsByType('lob')
+})
 
 // Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3ZWYzYjhiMy0wMzcwLTQxMTktOGY1OS0wYzM1NzNlOTI3NDMiLCJpZCI6Mzk4MzMsImlhdCI6MTc0ODIwNDA4OX0.HBox4N50pESMU1yJs33-0cNd22sTvIv0KetnMAJMdXU'
 
@@ -109,6 +113,10 @@ watch(mapVisualizations, (updated) => {
   console.log('New visualizations:', newFiltered)
   for (const viz of newFiltered) {
     currentVisualizations.value.push(viz)
+
+    console.log("\x1b[1m Here is Viz: ----------\n" + "\x1b[0m" + viz)
+
+    // DATASOURCE
     let dsInstance = new SweApi('pm-datasource-' + randomUUID(), {
       endpointUrl: viz.visualizationComponents.dataSource.endpointUrl,
       resource: viz.visualizationComponents.dataSource.resource,
@@ -118,7 +126,9 @@ watch(mapVisualizations, (updated) => {
       endTime: viz.visualizationComponents.dataSource.endTime,
       mode: viz.visualizationComponents.dataSource.mode,
     })
+
     console.log('[MapView] Creating datasource for PointMarkerLayer:', dsInstance)
+    
     const layerOpts = viz.visualizationComponents.dataLayer
     const pmLayer = new PointMarkerLayer({
       name: viz.name,
@@ -183,6 +193,61 @@ watch(featureVisualizations, (updated) => {
     }
   }
 }, { deep: true })
+
+watch(lobVisualizations, (updated) => {
+  // Remove lob visualizations that are no longer present
+  const removed = currentVisualizations.value.filter(val => !updated.includes(val))
+  for (const viz of removed) {
+    const idx = currentVisualizations.value.indexOf(viz)
+    if (idx !== -1) {
+      currentVisualizations.value.splice(idx, 1)
+      const lobLayer = lobLayers.value[idx]
+      if (lobLayer && mapView.value) {
+        mapView.value.removeLayer?.(lobLayer)
+      }
+      lobLayers.value.splice(idx, 1)
+    }
+  }
+
+  // Add new lob visualizations
+  const newFiltered = updated.filter(val => !currentVisualizations.value.includes(val))
+  console.log('New LOB visualizations:', newFiltered)
+
+  for (const viz of newFiltered) {
+    currentVisualizations.value.push(viz)
+
+    // Create datasource
+    let dsInstance = new SweApi('lob-datasource-' + randomUUID(), {
+      endpointUrl: viz.visualizationComponents.dataSource.endpointUrl,
+      resource: viz.visualizationComponents.dataSource.resource,
+      tls: viz.visualizationComponents.dataSource.tls,
+      protocol: viz.visualizationComponents.dataSource.protocol,
+      startTime: viz.visualizationComponents.dataSource.startTime,
+      endTime: viz.visualizationComponents.dataSource.endTime,
+      mode: viz.visualizationComponents.dataSource.mode,
+    })
+
+    console.log('[MapView] Creating datasource for LineLayer:', dsInstance)
+
+    const layerOpts = viz.visualizationComponents.dataLayer
+    const lobLayer = new LineLayer({
+      name: viz.name,
+      dataSourceIds: [dsInstance.id],
+      // this is key: how to get geometry from each record
+      getStartLocationAndBearing: layerOpts.getStartLocationAndBearing, 
+      color : 'rgba(0,0,255,0.5)',
+      weight : 10,
+      opacity : .5,
+    })
+
+    lobLayers.value.push(lobLayer)
+    mapView.value.addLayer(lobLayer)
+    console.log('[MapView] Creating LineLayer:', lobLayer)
+    dsInstance.connect()
+  }
+}, { deep: true })
+
+
 
 function addCesiumMarker(viz: any) {
   console.log('[MapView] TEST Adding Cesium marker')
