@@ -6,7 +6,7 @@ import DataSynchronizer from 'osh-js/source/core/timesync/DataSynchronizer';
 import { CesiumTerrainProvider, EllipsoidTerrainProvider, Ion, IonResource } from 'cesium'
 import * as Cesium from 'cesium'
 import LeafletView from 'osh-js/source/core/ui/view/map/LeafletView'
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useVisualizationStore } from '../stores/visualizationstore'
 import { OSHVisualization } from '@/lib/OSHConnectDataStructs'
 import { createLocationDataSource } from '@/components/visualizations/DataComposables'
@@ -41,7 +41,8 @@ onMounted(() => {
 
   if (mapLayerType.value === 'leaflet') {
     const leafletMapView = new LeafletView({
-      container: 'cesiumContainer',
+      // container: 'cesiumContainer',
+      container: 'leafletContainer',
       layers: [],
       autoZoomOnFirstMarker: true
     })
@@ -260,8 +261,9 @@ watch(lobVisualizations, (updated) => {
       // this is key: how to get geometry from each record
       getStartLocationAndBearing: layerOpts.getStartLocationAndBearing, 
       color : layerOpts.color,
-      weight : 10,
-      opacity : .5,
+      weight : layerOpts.weight,
+      opacity : layerOpts.opacity,
+      distanceKm : layerOpts.distanceKm
     })
     
     lobLayers.value.push(lineLayer)
@@ -333,7 +335,9 @@ function addCesiumMarker(viz: any) {
 <template>
   <div class="maphero">
     <!--    <v-btn @click="addCesiumMarker" position="absolute">Add Cesium Marker</v-btn>-->
-    <div class="cesium-container maphero" id="cesiumContainer"></div>
+    <!-- <div class="cesium-container maphero" id="cesiumContainer"></div> -->
+    <div v-if="mapLayerType === 'leaflet'" id="leafletContainer" class="maphero"></div>
+    <div v-else id="cesiumContainer" class="maphero"></div>
   </div>
 
 </template>

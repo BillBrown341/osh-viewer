@@ -371,12 +371,13 @@ export function CreateMapViewProps(ds: OSHDatastream, selectedProperty: any, vis
  * @param visOptions
  * @constructor
  */
-export function CreateLOBViewProps(ds: OSHDatastream, selectedLocation: any, selectedLOB: any, selectedColor: any, visOptions: any): {
+export function CreateLOBViewProps(ds: OSHDatastream, selectedLocation: any, selectedLOB: any, selectedLobOptions: any, visOptions: any): {
   dataSource: ISweApiDataSourceProperties,
   mapLayer: IMapLayerProperties,
   mapView: IMapViewProperties
 } {
   console.log('[DatasourceUtils] Creating Map View for Datastream:', ds)
+  
   const parentSystem = ds.getParentSystem()
   // Build SweApiDataSourceProperties
   const dataSource: ISweApiDataSourceProperties = {
@@ -417,9 +418,10 @@ export function CreateLOBViewProps(ds: OSHDatastream, selectedLocation: any, sel
     markerColor: visOptions.markerColor || 'red',
     markerIcon: visOptions.markerIcon || undefined,
 
-    color : selectedColor,
-    weight : 10,
-    opacity : .5,
+    color : selectedLobOptions.color,
+    weight : selectedLobOptions.weight,
+    opacity : selectedLobOptions.opacity,
+    distanceKm : selectedLobOptions.length,
     name: parentSystem.name
   }
 
