@@ -76,8 +76,8 @@ watch(selectedColor, (val) => {
         </v-color-picker>
       </v-container>
     </v-card>
-    <TimePicker title="Start Time" v-model:formattedDate="startTime" />
-    <TimePicker title="End Time" v-model:formattedDate="endTime" />
+    <TimePicker title="Start Time" v-model:timeInstant="startTime" />
+    <TimePicker title="End Time" v-model:timeInstant="endTime" />
     
 
     <v-combobox

@@ -2,6 +2,7 @@
 import PointMarkerLayer from 'osh-js/source/core/ui/layer/PointMarkerLayer'
 import LineLayer from 'osh-js/source/core/ui/layer/LineLayer' 
 import CesiumView from 'osh-js/source/core/ui/view/map/CesiumView'
+import DataSynchronizer from 'osh-js/source/core/timesync/DataSynchronizer';
 import { CesiumTerrainProvider, EllipsoidTerrainProvider, Ion, IonResource } from 'cesium'
 import * as Cesium from 'cesium'
 import LeafletView from 'osh-js/source/core/ui/view/map/LeafletView'
@@ -11,6 +12,7 @@ import { OSHVisualization } from '@/lib/OSHConnectDataStructs'
 import { createLocationDataSource } from '@/components/visualizations/DataComposables'
 import SweApi from 'osh-js/source/core/datasource/sweapi/SweApi.datasource.js'
 import { randomUUID } from 'osh-js/source/core/utils/Utils.js'
+import { Mode } from 'osh-js/source/core/datasource/Mode.js'
 
 const visualizationStore = useVisualizationStore()
 const mapLayerType = ref('leaflet')
@@ -212,6 +214,7 @@ watch(lobVisualizations, (updated) => {
   // Add new lob visualizations
   const newFiltered = updated.filter(val => !currentVisualizations.value.includes(val))
   console.log('New LOB visualizations:', newFiltered)
+  
 
   for (const viz of newFiltered) {
     currentVisualizations.value.push(viz)
@@ -225,6 +228,7 @@ watch(lobVisualizations, (updated) => {
       startTime: viz.visualizationComponents.dataSource.startTime,
       endTime: viz.visualizationComponents.dataSource.endTime,
       mode: viz.visualizationComponents.dataSource.mode,
+      replaySpeed: 1
     })
     
     const layerOpts = viz.visualizationComponents.dataLayer
@@ -263,7 +267,24 @@ watch(lobVisualizations, (updated) => {
     lobLayers.value.push(lineLayer)
     mapView.value.addLayer(lineLayer)
     console.log('[MapView] Creating LineLayer:', lineLayer)
-    dsInstance.connect()
+
+  
+    if(viz.visualizationComponents.dataSource.mode === "replay"){
+      console.log("\u001b[1m[MAPVIEW] MODE: \u001b[0m" + viz.visualizationComponents.dataSource.mode);
+      console.log("\u001b[1m[MAPVIEW] Start: \u001b[0m" + viz.visualizationComponents.dataSource.startTime);
+      console.log("\u001b[1m[MAPVIEW] End: \u001b[0m" + viz.visualizationComponents.dataSource.endTime);
+      let dataSynchronizer = new DataSynchronizer({
+          replaySpeed:1,
+          mode: Mode.REPLAY,
+          dataSources: [dsInstance],
+          startTime:viz.visualizationComponents.dataSource.startTime,
+          endTime: viz.visualizationComponents.dataSource.endTime
+      })
+      dataSynchronizer.connect();
+
+    }else{
+      dsInstance.connect();
+    }
   }
 }, { deep: true })
 

@@ -47,7 +47,7 @@ watch(selectedProperty, (val) => {
     >
       <!-- How each option in the dropdown looks -->
       <template v-slot:item="{props, item }">
-        <div class="property-row no-wrap" v-bind="props">
+        <div class="property-row no-wrap custom-pointer" v-bind="props">
           <span class="pa-2 property-label font-weight-bold">{{ item.raw.label }}</span>
           <span class="pa-2 property-name text-grey-darken-1">| {{ item.raw.name }} |</span>
           <span class="pa-2 property-definition text-caption text-grey">definition: {{ item.raw.definition }}</span>
@@ -55,7 +55,7 @@ watch(selectedProperty, (val) => {
       </template>
       <!-- How the selected option appears inside the input -->
       <template v-slot:selection="{ item }">
-        <div class="property-row no-wrap" v-if="item">
+        <div class="property-row no-wrap custom-pointer" v-if="item">
           <span class="pa-2 property-label font-weight-bold">{{ item.raw.label }}</span>
           <span class="pa-2 property-name text-grey-darken-1">{{ item.raw.name }}</span>
           <span class="pa-2 property-definition text-caption text-grey">{{ item.raw.definition }}</span>
@@ -66,5 +66,8 @@ watch(selectedProperty, (val) => {
  </template>
 
 <style scoped>
+.custom-pointer {
+  cursor: default; /* Change to your desired cursor style (e.g., text, default, help, wait) */
+}
 
 </style>
