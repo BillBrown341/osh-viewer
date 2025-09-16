@@ -9,7 +9,7 @@ const uiStore = useUIStore();
 
 // Define reactive variables for the form fields
 const nodeName = ref('Kraken')
-const nodeHost = ref('192.168.50.119')
+const nodeHost = ref('localhost')
 const nodePort = ref('8082')
 const nodePath = ref('sensorhub/api')
 const nodeUser = ref('kraken')
