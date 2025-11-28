@@ -64,6 +64,10 @@ const vizComponents: Record<VizTypeKeys, {Config: any, Customize: any}> = {
     Customize: defineAsyncComponent(() => import('@/components/menus/visualization-wizard/visualizations/pmorientation/Customize.vue')),
   },
   // add other types here
+  pointmarker: {
+    Config: defineAsyncComponent(() => import('@/components/menus/visualization-wizard/visualizations/pointmarker/Config.vue')),
+    Customize: defineAsyncComponent(() => import('@/components/menus/visualization-wizard/visualizations/pointmarker/Customize.vue')),
+  }
 }
 
 const getStepComponent = (index: number) => {
